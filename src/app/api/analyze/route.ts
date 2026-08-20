@@ -4,12 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
- console.log('=== DEBUG ENV ===');
+    console.log('=== DEBUG ENV ===');
     console.log('GITHUB_REPO:', process.env.GITHUB_REPO);
     console.log('GITHUB_ACTIONS_TOKEN:', process.env.GITHUB_ACTIONS_TOKEN ? 'SET' : 'MISSING');
     console.log('NODE_ENV:', process.env.NODE_ENV);
     console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
-    console.log('=== END DEBUG ===');    const body = await request.json();
+    console.log('=== END DEBUG ===');
+
+    const body = await request.json();
     const { source_type, url, figma_url, figma_token, files } = body;
 
     if (!source_type || !["url", "figma", "files"].includes(source_type)) {
@@ -26,7 +28,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Файлы обязательны" }, { status: 400 });
     }
 
-    // Rate limiting check
     const { rateLimit } = await import("@/lib/rate-limit");
     const ip = request.headers.get("x-forwarded-for") || "anonymous";
     const { success } = await rateLimit.limit(ip);
@@ -34,14 +35,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Слишком много запросов. Попробуйте через минуту." }, { status: 429 });
     }
 
-    // Get user if authenticated
     const cookieStore = cookies();
     const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Check free tier limits
     if (user) {
       const { data: profile } = await supabase
         .from("users")
@@ -63,7 +60,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create project
     const projectName = source_type === "url" ? new URL(url).hostname :
       source_type === "figma" ? "Figma файл" : `${files.length} файлов`;
 
@@ -84,7 +80,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Ошибка создания проекта" }, { status: 500 });
     }
 
-    // Create version
     const { data: version, error: versionError } = await supabase
       .from("versions")
       .insert({
@@ -100,8 +95,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Ошибка создания версии" }, { status: 500 });
     }
 
-    // Trigger GitHub Actions workflow
-    await triggerGitHubActions(version.id, {
+    // DEBUG: log repo before calling
+    const githubRepo = process.env.GITHUB_REPO || 'ondesignwave/landing-reviewer-mvp';
+    console.log('=== DEBUG GITHUB ===');
+    console.log('githubRepo variable:', githubRepo);
+    console.log('process.env.GITHUB_REPO:', process.env.GITHUB_REPO);
+    console.log('GITHUB_ACTIONS_TOKEN:', process.env.GITHUB_ACTIONS_TOKEN ? 'SET' : 'MISSING');
+    console.log('=== END DEBUG GITHUB ===');
+
+    await triggerGitHubActions(version.id, githubRepo, {
       sourceType: source_type,
       url,
       figmaUrl: figma_url,
@@ -122,12 +124,20 @@ function extractFigmaKey(figmaUrl: string): string | null {
   return match ? match[1] : null;
 }
 
-async function triggerGitHubActions(versionId: string, payload: any) {
+async function triggerGitHubActions(versionId: string, githubRepo: string, payload: any) {
   const githubToken = process.env.GITHUB_ACTIONS_TOKEN;
-  const repo = process.env.GITHUB_REPO; // format: "owner/repo"
+  const repo = githubRepo || process.env.GITHUB_REPO || 'ondesignwave/landing-reviewer-mvp';
+  
+  // DEBUG: log the actual URL being called
+  const apiUrl = `https://api.github.com/repos/${repo}/dispatches`;
+  console.log('=== DEBUG GITHUB API ===');
+  console.log('repo:', repo);
+  console.log('apiUrl:', apiUrl);
+  console.log('githubToken:', githubToken ? 'SET' : 'MISSING');
+  console.log('=== END DEBUG GITHUB API ===');
   
   if (!githubToken || !repo) {
-    console.warn("GitHub Actions not configured, version will stay in 'queued' status");
+    console.warn("GitHub Actions not configured:", { githubToken: !!githubToken, repo });
     return;
   }
 
@@ -147,7 +157,9 @@ async function triggerGitHubActions(versionId: string, payload: any) {
 
     if (!response.ok) {
       const error = await response.text();
-      console.error("GitHub Actions trigger failed:", error);
+      console.error("GitHub Actions trigger failed:", { status: response.status, error });
+    } else {
+      console.log("GitHub Actions triggered successfully");
     }
   } catch (error) {
     console.error("GitHub Actions trigger error:", error);
