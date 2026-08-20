@@ -1,7 +1,20 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, CheckCircle, FileText, Shield, Zap, Eye, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Zap } from "lucide-react";
+import {
+  IconHierarchy2,
+  IconTypography,
+  IconClick,
+  IconResize,
+  IconTargetArrow,
+  IconUpload,
+  IconSparkles,
+  IconFileCheck,
+  IconLink,
+  IconBrandFigma,
+  IconPhoto,
+} from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dropzone } from "@/components/ui/dropzone";
@@ -60,18 +73,18 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-32">
+      <section className="hero-gradient relative overflow-hidden py-20 lg:py-32">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge variant="secondary" className="mb-6 inline-flex items-center gap-2">
+            <Badge className="mb-6 inline-flex items-center gap-2 border-white/20 bg-white/10 text-white hover:bg-white/10">
               <Zap className="h-3 w-3" />
               MVP — Бесплатно на время бета-теста
             </Badge>
-            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-balance mb-6">
+            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-balance mb-6 text-white">
               AI-ревью лендинга за{" "}
               <span className="text-primary">60 секунд</span>
             </h1>
-            <p className="text-lg lg:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-lg lg:text-xl text-white/70 mb-8 max-w-2xl mx-auto">
               Загрузите ссылку на Figma, скриншоты или URL — получите экспертный разбор как от
               Senior Art Director. Визуальная иерархия, типографика, CTA, адаптив, конверсионные
               блоки.
@@ -98,7 +111,7 @@ export default function LandingPage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
                 onClick={() => scrollToId("how-it-works")}
               >
                 Как это работает
@@ -119,17 +132,17 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                icon: <FileText className="h-5 w-5" />,
+                icon: <IconUpload className="h-5 w-5" />,
                 title: "1. Загрузите материал",
                 desc: "Ссылка на опубликованный лендинг, публичный Figma-файл или скриншоты/PDF",
               },
               {
-                icon: <Zap className="h-5 w-5" />,
+                icon: <IconSparkles className="h-5 w-5" />,
                 title: "2. AI анализирует",
                 desc: "За 30–90 секунд разбираем иерархию, типографику, CTA, адаптив и конверсионные блоки",
               },
               {
-                icon: <CheckCircle className="h-5 w-5" />,
+                icon: <IconFileCheck className="h-5 w-5" />,
                 title: "3. Получаете отчёт",
                 desc: "Оценки по 5 критериям и приоритизированный чек-лист правок, готовый к работе",
               },
@@ -156,9 +169,9 @@ export default function LandingPage() {
               {/* Tabs */}
               <div className="flex border-b" role="tablist">
                 {[
-                  { id: "url", label: "URL сайта", icon: <Eye className="h-4 w-4" /> },
-                  { id: "figma", label: "Figma ссылка", icon: <FileText className="h-4 w-4" /> },
-                  { id: "files", label: "Скриншоты/PDF", icon: <Shield className="h-4 w-4" /> },
+                  { id: "url", label: "URL сайта", icon: <IconLink className="h-4 w-4" /> },
+                  { id: "figma", label: "Figma ссылка", icon: <IconBrandFigma className="h-4 w-4" /> },
+                  { id: "files", label: "Скриншоты/PDF", icon: <IconPhoto className="h-4 w-4" /> },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -271,27 +284,27 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                icon: <Eye className="h-5 w-5" />,
+                icon: <IconHierarchy2 className="h-5 w-5" />,
                 title: "Визуальная иерархия",
                 desc: "Приоритеты внимания, фокус, дыхание, вес элементов, сканируемость",
               },
               {
-                icon: <FileText className="h-5 w-5" />,
+                icon: <IconTypography className="h-5 w-5" />,
                 title: "Типографика",
                 desc: "Шрифты, размеры, интерлиньяж, контраст, читаемость, ритм, WCAG AA",
               },
               {
-                icon: <Zap className="h-5 w-5" />,
+                icon: <IconClick className="h-5 w-5" />,
                 title: "Сценарий и CTA",
                 desc: "Пользовательский путь, ясность действий, микрокопирайтинг, приоритет кнопок",
               },
               {
-                icon: <Shield className="h-5 w-5" />,
+                icon: <IconResize className="h-5 w-5" />,
                 title: "Адаптив и резиновая вёрстка",
                 desc: "Breakpoints, переполнение, тач-таргеты, безопасные зоны, контент-шифт",
               },
               {
-                icon: <CheckCircle className="h-5 w-5" />,
+                icon: <IconTargetArrow className="h-5 w-5" />,
                 title: "Конверсионные блоки",
                 desc: "Hero, соцдоказательства, формы, гарантии, urgency, риск-реверсинг",
               },
@@ -311,10 +324,10 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
+      <section className="hero-gradient py-16 lg:py-24 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">Готовы проверить свой лендинг?</h2>
-          <p className="text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
+          <p className="text-white/70 mb-8 max-w-2xl mx-auto">
             Первый полный разбор бесплатно. Без регистрации для превью. Платите только если результат
             пригодился.
           </p>

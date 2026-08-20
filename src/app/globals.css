@@ -10,7 +10,7 @@
     --card-foreground: 20 10% 5%;
     --popover: 0 0% 100%;
     --popover-foreground: 20 10% 5%;
-    --primary: 262 83% 58%;
+    --primary: 224 96% 53%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96%;
     --secondary-foreground: 20 10% 5%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 262 83% 58%;
+    --ring: 224 96% 53%;
     --radius: 0.75rem;
   }
 
@@ -33,7 +33,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 20 10% 6%;
     --popover-foreground: 0 0% 98%;
-    --primary: 262 83% 58%;
+    --primary: 224 96% 60%;
     --primary-foreground: 0 0% 98%;
     --secondary: 20 5% 12%;
     --secondary-foreground: 0 0% 98%;
@@ -45,7 +45,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 20 5% 15%;
     --input: 20 5% 15%;
-    --ring: 262 83% 58%;
+    --ring: 224 96% 60%;
   }
 }
 
@@ -122,6 +122,11 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .hero-gradient {
+    background:
+      radial-gradient(60% 55% at 50% 0%, rgba(22, 83, 250, 0.55) 0%, rgba(22, 83, 250, 0) 70%),
+      linear-gradient(180deg, #0a0e2e 0%, #05061a 100%);
   }
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;

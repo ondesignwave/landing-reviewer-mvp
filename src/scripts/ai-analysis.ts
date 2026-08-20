@@ -13,7 +13,7 @@ if (!VERSION_ID) {
 }
 
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434";
-const MODEL = process.env.OLLAMA_MODEL || "qwen2-vl:7b";
+const MODEL = process.env.OLLAMA_MODEL || "qwen2.5vl:7b";
 
 async function main() {
   console.log(`[${VERSION_ID}] Starting AI analysis with ${MODEL}...`);

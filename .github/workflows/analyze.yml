@@ -44,7 +44,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           OLLAMA_URL: ${{ secrets.OLLAMA_URL }}
-          OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL || 'qwen2-vl:7b' }}
+          OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL || 'qwen2.5vl:7b' }}
           VERSION_ID: ${{ github.event.client_payload.versionId }}
 
       - name: Generate PDF

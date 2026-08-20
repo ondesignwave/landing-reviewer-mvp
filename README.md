@@ -36,9 +36,9 @@ AI-ревью лендингов для веб-дизайнеров. Загру�
 # https://ollama.ai/download (macOS)
 
 # 2. Скачайте vision модель (нужно 8-16GB RAM)
-ollama pull qwen2-vl:7b    # рекомендуется (качество/скорость)
+ollama pull qwen2.5vl:7b    # рекомендуется (качество/скорость)
 # или ollama pull llava:13b  # если больше RAM
-# или ollama pull qwen2-vl:2b  # если мало RAM (быстрее, хуже качество)
+# или ollama pull qwen2.5vl:2b  # если мало RAM (быстрее, хуже качество)
 
 # 3. Запустите сервер
 ollama serve
@@ -60,7 +60,7 @@ cloudflared tunnel --url http://localhost:11434
 | `SUPABASE_URL` | `https://your-project.supabase.co` |
 | `SUPABASE_SERVICE_KEY` | Service Role Key из Supabase (Settings → API) |
 | `OLLAMA_URL` | Ваш публичный туннель (например `https://abc123.ngrok-free.app`) |
-| `OLLAMA_MODEL` | `qwen2-vl:7b` (или другая) |
+| `OLLAMA_MODEL` | `qwen2.5vl:7b` (или другая) |
 
 ### 4. Настройте Vercel Environment Variables
 
@@ -73,7 +73,7 @@ SUPABASE_SERVICE_KEY=
 GITHUB_ACTIONS_TOKEN=ghp_xxx  # Classic PAT с scope "repo"
 GITHUB_REPO=your-username/landing-reviewer-mvp
 OLLAMA_URL=https://your-tunnel.ngrok-free.app
-OLLAMA_MODEL=qwen2-vl:7b
+OLLAMA_MODEL=qwen2.5vl:7b
 RESEND_API_KEY=re_xxx
 EMAIL_FROM=Landing Reviewer <noreply@yourdomain.com>
 UPSTASH_REDIS_REST_URL=https://xxx.upstash.io
@@ -228,7 +228,7 @@ npm run scripts:pdf <versionId>
 | Ограничение | Значение | Решение |
 |-------------|----------|---------|
 | GitHub Actions минут | 2000/мес | ~60-80 разборов/мес (30 мин на job) |
-| Ollama RAM | 8-16GB для qwen2-vl:7b | Используйте `qwen2-vl:2b` (4GB RAM) |
+| Ollama RAM | 8-16GB для qwen2.5vl:7b | Используйте `qwen2.5vl:2b` (4GB RAM) |
 | Ollama качество | Ниже GPT-4o Vision | Достаточно для MVP, потом переезд на API |
 | Туннель (ngrok) | URL меняется | Обновляйте `OLLAMA_URL` в GitHub Secrets |
 | Параллельность | 1 job за раз | Добавьте очередь в Supabase при росте |
@@ -254,7 +254,7 @@ gh run list --workflow=analyze.yml --limit=10
 gh run view <run-id> --log
 
 # Тест Ollama локально
-curl http://localhost:11434/api/chat -d '{"model":"qwen2-vl:7b","messages":[{"role":"user","content":"Hi"}],"stream":false}'
+curl http://localhost:11434/api/chat -d '{"model":"qwen2.5vl:7b","messages":[{"role":"user","content":"Hi"}],"stream":false}'
 
 # Supabase Studio
 npx supabase studio
