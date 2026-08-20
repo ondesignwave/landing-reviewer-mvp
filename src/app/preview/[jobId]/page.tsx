@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle, AlertCircle, X, ChevronDown, ChevronUp, Eye, FileText, Download, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,10 +17,9 @@ const CRITERIA = [
   { key: "conversion_blocks", label: "Конверсионные блоки", icon: Share2 },
 ] as const;
 
-export default function PreviewPage() {
+export default function PreviewPage({ params }: { params: { jobId: string } }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const jobId = searchParams.get("jobId");
+  const jobId = params.jobId;
 
   const [data, setData] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
