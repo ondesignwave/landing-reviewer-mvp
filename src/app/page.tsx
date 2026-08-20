@@ -23,6 +23,10 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
+const gradientButtonStyle: React.CSSProperties = {
+  background: "linear-gradient(70deg, #bdd3ff 0%, #0b9eec 45%, #da7ad6 100%)",
+};
+
 export default function LandingPage() {
   const [activeTab, setActiveTab] = React.useState<"url" | "figma" | "files">("url");
   const [url, setUrl] = React.useState("");
@@ -116,9 +120,9 @@ export default function LandingPage() {
   })();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="hero-gradient min-h-screen">
       {/* Hero Section */}
-      <section className="hero-gradient relative overflow-hidden py-20 lg:py-32">
+      <section className="relative overflow-hidden py-20 lg:py-32">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <Badge className="mb-6 inline-flex items-center gap-2 border-white/20 bg-white/10 text-white hover:bg-white/10">
@@ -137,7 +141,8 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button
                 size="lg"
-                className="w-full sm:w-auto gap-2"
+                className="w-full sm:w-auto gap-2 border-0 text-white hover:opacity-90"
+                style={gradientButtonStyle}
                 disabled={isLoading}
                 onClick={() => scrollToId("analyze-form")}
               >
@@ -170,8 +175,8 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Как это работает</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Три шага от ссылки до готового чек-листа правок</p>
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">Как это работает</h2>
+            <p className="text-white/70 max-w-2xl mx-auto">Три шага от ссылки до готового чек-листа правок</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -192,13 +197,13 @@ export default function LandingPage() {
                 desc: "Оценки по 5 критериям и приоритизированный чек-лист правок, готовый к работе",
               },
             ].map((item) => (
-              <Card key={item.title} className="h-full">
+              <Card key={item.title} className="h-full bg-white/5 border-white/10 backdrop-blur-sm text-white hover:border-white/20">
                 <CardHeader>
                   <div className="flex items-center gap-2 text-primary mb-2">{item.icon}</div>
-                  <CardTitle className="text-lg">{item.title}</CardTitle>
+                  <CardTitle className="text-lg text-white">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  <p className="text-sm text-white/60">{item.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -207,7 +212,7 @@ export default function LandingPage() {
       </section>
 
       {/* Upload Form */}
-      <section id="analyze-form" className="py-16 lg:py-24 bg-muted/30">
+      <section id="analyze-form" className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="bg-card border rounded-xl shadow-sm overflow-hidden">
@@ -300,7 +305,12 @@ export default function LandingPage() {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full" disabled={isLoading || !canSubmit}>
+                <Button
+                  type="submit"
+                  className="w-full border-0 text-white hover:opacity-90"
+                  style={gradientButtonStyle}
+                  disabled={isLoading || !canSubmit}
+                >
                   {isLoading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -320,8 +330,8 @@ export default function LandingPage() {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Что вы получаете</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">Что вы получаете</h2>
+            <p className="text-white/70 max-w-2xl mx-auto">
               Структурированный отчёт по 5 критериям с оценками, проблемами и приоритизированным чек-листом правок
             </p>
           </div>
@@ -354,13 +364,13 @@ export default function LandingPage() {
                 desc: "Hero, соцдоказательства, формы, гарантии, urgency, риск-реверсинг",
               },
             ].map((item) => (
-              <Card key={item.title} className="h-full">
+              <Card key={item.title} className="h-full bg-white/5 border-white/10 backdrop-blur-sm text-white hover:border-white/20">
                 <CardHeader>
                   <div className="flex items-center gap-2 text-primary mb-2">{item.icon}</div>
-                  <CardTitle className="text-lg">{item.title}</CardTitle>
+                  <CardTitle className="text-lg text-white">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  <p className="text-sm text-white/60">{item.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -369,14 +379,19 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="hero-gradient py-16 lg:py-24 text-white">
+      <section className="py-16 lg:py-24 text-white border-t border-white/10">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">Готовы проверить свой лендинг?</h2>
           <p className="text-white/70 mb-8 max-w-2xl mx-auto">
             Первый полный разбор бесплатно. Без регистрации для превью. Платите только если результат
             пригодился.
           </p>
-          <Button size="lg" variant="secondary" className="gap-2" onClick={() => scrollToId("analyze-form")}>
+          <Button
+            size="lg"
+            className="gap-2 border-0 text-white hover:opacity-90"
+            style={gradientButtonStyle}
+            onClick={() => scrollToId("analyze-form")}
+          >
             <ArrowRight className="h-4 w-4" />
             Начать бесплатно
           </Button>
@@ -384,11 +399,11 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground space-y-2">
+      <footer className="py-12 border-t border-white/10">
+        <div className="container mx-auto px-4 text-center text-sm text-white/50 space-y-2">
           <p>Landing Reviewer — MVP для веб-дизайнеров. Сделано с Next.js, Supabase, Inngest.</p>
           <p>
-            <Link href="/privacy" className="hover:text-foreground hover:underline">
+            <Link href="/privacy" className="hover:text-white hover:underline">
               Политика обработки персональных данных
             </Link>
           </p>
@@ -413,7 +428,11 @@ export default function LandingPage() {
                 <p className="text-muted-foreground mb-6">
                   Оценка {jobData.report?.overall_score?.toFixed?.(1) ?? "—"}/10. Полный отчёт — на странице превью.
                 </p>
-                <Button onClick={() => window.open(`/preview/${jobId}`, "_blank")} className="w-full">
+                <Button
+                  onClick={() => window.open(`/preview/${jobId}`, "_blank")}
+                  className="w-full border-0 text-white hover:opacity-90"
+                  style={gradientButtonStyle}
+                >
                   Смотреть результат
                 </Button>
               </>
@@ -441,7 +460,11 @@ export default function LandingPage() {
                   Обычно занимает 2–3 минуты{jobElapsedLabel && ` · прошло ${jobElapsedLabel}`}. Статус
                   здесь обновится сам, когда будет готово — можно просто подождать на этой странице.
                 </p>
-                <Button onClick={() => window.open(`/preview/${jobId}`, "_blank")} className="w-full">
+                <Button
+                  onClick={() => window.open(`/preview/${jobId}`, "_blank")}
+                  className="w-full border-0 text-white hover:opacity-90"
+                  style={gradientButtonStyle}
+                >
                   Открыть превью
                 </Button>
               </>
