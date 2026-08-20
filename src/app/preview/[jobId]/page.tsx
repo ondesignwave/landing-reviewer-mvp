@@ -72,8 +72,8 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
     );
   }
 
-  const { version, report, project } = data;
-  const isReady = version.status === "ready" && report;
+  const { version, report, project, status } = data;
+  const isReady = status === "ready" && report;
 
   return (
     <div className="min-h-screen bg-background">
@@ -92,15 +92,15 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
           </div>
           <div className="flex items-center gap-2">
             <Badge variant={isReady ? "success" : "warning"}>
-              {version.status === "processing" && "Обработка..."}
-              {version.status === "ready" && "Готово"}
-              {version.status === "failed" && "Ошибка"}
+              {status === "processing" && "Обработка..."}
+              {status === "ready" && "Готово"}
+              {status === "failed" && "Ошибка"}
             </Badge>
           </div>
         </div>
       </header>
 
-      {version.status === "failed" && (
+      {status === "failed" && (
         <div className="container mx-auto px-4 py-8 text-center">
           <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h2 className="text-xl font-semibold mb-2">Ошибка анализа</h2>
