@@ -4,7 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+ console.log('=== DEBUG ENV ===');
+    console.log('GITHUB_REPO:', process.env.GITHUB_REPO);
+    console.log('GITHUB_ACTIONS_TOKEN:', process.env.GITHUB_ACTIONS_TOKEN ? 'SET' : 'MISSING');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('VERCEL_ENV:', process.env.VERCEL_ENV);
+    console.log('=== END DEBUG ===');    const body = await request.json();
     const { source_type, url, figma_url, figma_token, files } = body;
 
     if (!source_type || !["url", "figma", "files"].includes(source_type)) {
