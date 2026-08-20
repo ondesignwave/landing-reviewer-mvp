@@ -101,7 +101,15 @@ async function captureUrl(context: any, url: string): Promise<string[]> {
       });
       await page.waitForTimeout(1000);
 
-      const screenshot = await page.screenshot({ fullPage: true, type: "png" });
+      // Cap capture height so very long pages don't blow up the vision
+      // model's context (and local Ollama's available RAM for KV cache).
+      const MAX_CAPTURE_HEIGHT = 4000;
+      const pageHeight = await page.evaluate(() => document.body.scrollHeight);
+      const captureHeight = Math.min(pageHeight, MAX_CAPTURE_HEIGHT);
+      const screenshot = await page.screenshot({
+        type: "png",
+        clip: { x: 0, y: 0, width: vp.width, height: captureHeight },
+      });
       const path = `${VERSION_ID}/${vp.name}.png`;
       
       const { error } = await supabase.storage
