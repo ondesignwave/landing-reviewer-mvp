@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, Zap } from "lucide-react";
+import { ArrowRight, Loader2, Zap, CheckCircle, AlertCircle, X as XIcon } from "lucide-react";
 import {
   IconHierarchy2,
   IconTypography,
@@ -31,11 +31,47 @@ export default function LandingPage() {
   const [files, setFiles] = React.useState<File[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [jobId, setJobId] = React.useState<string | null>(null);
+  const [jobData, setJobData] = React.useState<any>(null);
+  const [now, setNow] = React.useState(() => Date.now());
   const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!jobId) return;
+
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/status/${jobId}`);
+        const json = await res.json();
+        if (cancelled) return;
+        setJobData(json);
+        if (json.status === "processing") setTimeout(poll, 2000);
+      } catch {
+        // keep showing "processing" — the preview page has its own error handling
+      }
+    };
+    poll();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [jobId]);
+
+  React.useEffect(() => {
+    if (jobData?.status !== "processing") return;
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [jobData?.status]);
+
+  const closeModal = () => {
+    setJobId(null);
+    setJobData(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setJobData(null);
     setIsLoading(true);
 
     try {
@@ -70,6 +106,14 @@ export default function LandingPage() {
   const scrollToId = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const jobElapsedLabel = (() => {
+    if (!jobData?.version?.created_at) return null;
+    const seconds = Math.floor(
+      Math.max(0, now - new Date(jobData.version.created_at).getTime()) / 1000
+    );
+    return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  })();
 
   return (
     <div className="min-h-screen bg-background">
@@ -353,18 +397,55 @@ export default function LandingPage() {
 
       {jobId && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-card rounded-xl p-8 max-w-md w-full text-center">
-            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Анализ запущен</h3>
-            <p className="text-muted-foreground mb-6">
-              Обычно занимает 2–3 минуты. Результат появится на странице превью.
-            </p>
-            <Button
-              onClick={() => window.open(`/preview/${jobId}`, "_blank")}
-              className="w-full"
+          <div className="relative bg-card rounded-xl p-8 max-w-md w-full text-center">
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+              aria-label="Закрыть"
             >
-              Открыть превью
-            </Button>
+              <XIcon className="h-5 w-5" />
+            </button>
+
+            {jobData?.status === "ready" ? (
+              <>
+                <CheckCircle className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Разбор готов!</h3>
+                <p className="text-muted-foreground mb-6">
+                  Оценка {jobData.report?.overall_score?.toFixed?.(1) ?? "—"}/10. Полный отчёт — на странице превью.
+                </p>
+                <Button onClick={() => window.open(`/preview/${jobId}`, "_blank")} className="w-full">
+                  Смотреть результат
+                </Button>
+              </>
+            ) : jobData?.status === "failed" ? (
+              <>
+                <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Не получилось разобрать</h3>
+                <p className="text-muted-foreground mb-6">
+                  {jobData.version?.error_message || "Неизвестная ошибка"}
+                </p>
+                <Button onClick={closeModal} className="w-full">
+                  Попробовать снова
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="relative mx-auto mb-4 h-16 w-16">
+                  <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                    <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Анализ запущен</h3>
+                <p className="text-muted-foreground mb-6">
+                  Обычно занимает 2–3 минуты{jobElapsedLabel && ` · прошло ${jobElapsedLabel}`}. Статус
+                  здесь обновится сам, когда будет готово — можно просто подождать на этой странице.
+                </p>
+                <Button onClick={() => window.open(`/preview/${jobId}`, "_blank")} className="w-full">
+                  Открыть превью
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
