@@ -2,7 +2,21 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, CheckCircle, AlertCircle, X, ChevronDown, ChevronUp, Eye, FileText, Download, Share2 } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle,
+  Circle,
+  AlertCircle,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  FileText,
+  Download,
+  Share2,
+  Camera,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +38,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
   const [data, setData] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [expanded, setExpanded] = React.useState<string | null>(null);
+  const [now, setNow] = React.useState(() => Date.now());
 
   React.useEffect(() => {
     if (!jobId) return;
@@ -47,13 +62,23 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
     fetchStatus();
   }, [jobId]);
 
+  React.useEffect(() => {
+    if (data?.status !== "processing") return;
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [data?.status]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Анализирую лендинг...</h2>
-          <p className="text-muted-foreground">Это займёт 30–90 секунд</p>
+          <div className="relative mx-auto mb-4 h-16 w-16">
+            <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping" />
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <Loader2 className="h-7 w-7 animate-spin text-primary" />
+            </div>
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Загружаем разбор...</h2>
         </div>
       </div>
     );
@@ -74,6 +99,26 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
 
   const { version, report, project, status } = data;
   const isReady = status === "ready" && report;
+  const isProcessing = status === "processing";
+
+  const elapsedSeconds = Math.max(
+    0,
+    Math.floor((now - new Date(version.created_at).getTime()) / 1000)
+  );
+  const elapsedLabel = `${Math.floor(elapsedSeconds / 60)}:${String(elapsedSeconds % 60).padStart(2, "0")}`;
+
+  const stage: "screenshots" | "analysis" | "pdf" = !version.screenshot_urls?.length
+    ? "screenshots"
+    : !report
+      ? "analysis"
+      : "pdf";
+
+  const STAGES = [
+    { key: "screenshots", label: "Делаем скриншоты", icon: Camera },
+    { key: "analysis", label: "AI анализирует дизайн", icon: Sparkles },
+    { key: "pdf", label: "Готовим PDF-отчёт", icon: FileText },
+  ] as const;
+  const stageIndex = STAGES.findIndex((s) => s.key === stage);
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,11 +136,14 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant={isReady ? "success" : "warning"}>
-              {status === "processing" && "Обработка..."}
-              {status === "ready" && "Готово"}
-              {status === "failed" && "Ошибка"}
-            </Badge>
+            {isProcessing && (
+              <Badge className="border-primary/20 bg-primary/10 text-primary gap-1.5 hover:bg-primary/10">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Обработка · {elapsedLabel}
+              </Badge>
+            )}
+            {status === "ready" && <Badge variant="success">Готово</Badge>}
+            {status === "failed" && <Badge variant="destructive">Ошибка</Badge>}
           </div>
         </div>
       </header>
@@ -106,6 +154,44 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
           <h2 className="text-xl font-semibold mb-2">Ошибка анализа</h2>
           <p className="text-muted-foreground mb-6">{version.error_message || "Неизвестная ошибка"}</p>
           <Button onClick={() => router.push("/")}>Попробовать снова</Button>
+        </div>
+      )}
+
+      {isProcessing && (
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-sm mx-auto text-center">
+            <div className="relative mx-auto mb-6 h-20 w-20">
+              <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping" />
+              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            </div>
+            <h2 className="text-h3 font-semibold mb-2">Анализируем {project?.name}</h2>
+            <p className="text-sm text-muted-foreground mb-8">
+              Обычно занимает 2–3 минуты · прошло {elapsedLabel}
+            </p>
+
+            <div className="space-y-3 text-left">
+              {STAGES.map((s, i) => {
+                const done = i < stageIndex;
+                const active = i === stageIndex;
+                return (
+                  <div key={s.key} className="flex items-center gap-3">
+                    {done ? (
+                      <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                    ) : active ? (
+                      <Loader2 className="h-5 w-5 text-primary animate-spin flex-shrink-0" />
+                    ) : (
+                      <Circle className="h-5 w-5 text-muted-foreground/30 flex-shrink-0" />
+                    )}
+                    <span className={cn("text-sm", active ? "font-medium text-foreground" : done ? "text-foreground" : "text-muted-foreground")}>
+                      {s.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
 

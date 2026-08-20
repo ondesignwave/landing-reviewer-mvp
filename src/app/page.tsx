@@ -140,7 +140,7 @@ export default function LandingPage() {
               {
                 icon: <IconSparkles className="h-5 w-5" />,
                 title: "2. AI анализирует",
-                desc: "За 30–90 секунд разбираем иерархию, типографику, CTA, адаптив и конверсионные блоки",
+                desc: "За 2–3 минуты разбираем иерархию, типографику, CTA, адаптив и конверсионные блоки",
               },
               {
                 icon: <IconFileCheck className="h-5 w-5" />,
@@ -357,7 +357,7 @@ export default function LandingPage() {
             <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">Анализ запущен</h3>
             <p className="text-muted-foreground mb-6">
-              Это займёт 30–90 секунд. Результат появится на странице превью.
+              Обычно занимает 2–3 минуты. Результат появится на странице превью.
             </p>
             <Button
               onClick={() => window.open(`/preview/${jobId}`, "_blank")}
