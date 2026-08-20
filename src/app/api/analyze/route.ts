@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       .insert({
         project_id: project.id,
         version_num: 1,
-        status: "queued",
+        status: "processing",
       })
       .select()
       .single();
