@@ -73,25 +73,27 @@ function buildPrompt(): string {
 4. responsive (Адаптивность): breakpoints, переполнение, тач-таргеты, безопасные зоны, контент-шифт
 5. conversion_blocks (Конверсионные блоки): Hero, соцдоказательства, формы, гарантии, urgency, risk reversal
 
-ФОРМАТ ОТВЕТА (только JSON, без markdown):
+ВАЖНО: оценки и замечания должны основываться СТРОГО на том, что реально видно на приложенных скриншотах. Каждый лендинг разный — если ты пишешь одинаковые оценки или замечания для разных сайтов, это ошибка. Ниже дана только СХЕМА формата (не пример реального ответа) — placeholder-значения нужно полностью заменить своими, основанными на анализе конкретных скриншотов.
+
+СХЕМА ОТВЕТА (только JSON, без markdown):
 {
-  "criteria_scores": {"hierarchy": 7, "typography": 6, "cta_scenario": 8, "responsive": 5, "conversion_blocks": 7},
+  "criteria_scores": {"hierarchy": <целое 1-10>, "typography": <целое 1-10>, "cta_scenario": <целое 1-10>, "responsive": <целое 1-10>, "conversion_blocks": <целое 1-10>},
   "issues": {
-    "hierarchy": ["проблема 1", "проблема 2"],
-    "typography": ["проблема 1"],
-    "cta_scenario": [],
-    "responsive": ["проблема 1", "проблема 2"],
-    "conversion_blocks": ["проблема 1"]
+    "hierarchy": ["<конкретная проблема, если есть>"],
+    "typography": ["<конкретная проблема, если есть>"],
+    "cta_scenario": ["<конкретная проблема, если есть>"],
+    "responsive": ["<конкретная проблема, если есть>"],
+    "conversion_blocks": ["<конкретная проблема, если есть>"]
   },
   "checklist": [
-    {"priority": 1, "text": "Критично: исправить сразу", "criterion": "hierarchy"},
-    {"priority": 2, "text": "Важно: сделать до сдачи", "criterion": "typography"},
-    {"priority": 3, "text": "Желательно: улучшит результат", "criterion": "conversion_blocks"}
+    {"priority": 1, "text": "<самая критичная правка для ЭТОГО лендинга>", "criterion": "<ключ критерия>"},
+    {"priority": 2, "text": "<важная правка>", "criterion": "<ключ критерия>"},
+    {"priority": 3, "text": "<желательная правка>", "criterion": "<ключ критерия>"}
   ],
-  "overall_score": 6.6
+  "overall_score": <среднее по критериям, число с одним знаком после точки>
 }
 
-ТОН: экспертный, конкретный, конструктивный. Оценки 1-10. Приоритеты: 1=критично, 2=важно, 3=желательно.`;
+ТОН: экспертный, конкретный, конструктивный. Оценки — целые числа 1-10, у разных лендингов они должны отличаться. Приоритеты: 1=критично, 2=важно, 3=желательно.`;
 }
 
 async function buildMessages(prompt: string, screenshots: string[]) {
@@ -121,7 +123,7 @@ async function callOllama(messages: any[]): Promise<string> {
       messages,
       stream: false,
       options: {
-        temperature: 0.1,
+        temperature: 0.4,
         num_predict: 2048,
         num_ctx: 12288,
       },
