@@ -80,7 +80,7 @@ async function captureUrl(context: any, url: string): Promise<string[]> {
     await page.setViewportSize({ width: vp.width, height: vp.height });
     
     try {
-      await page.goto(url, { waitUntil: "networkidle", timeout: 60000 });
+      await page.goto(url, { waitUntil: "load", timeout: 60000 });
       await page.waitForTimeout(2000); // Wait for lazy content
       
       // Scroll to capture full page
