@@ -45,7 +45,7 @@ async function main() {
     const parsed = parseAnalysis(analysis);
     
     // Save report
-    await supabase.from("reports").insert({
+    const { error: insertError } = await supabase.from("reports").insert({
       version_id: VERSION_ID,
       criteria_scores: parsed.criteria_scores,
       issues: parsed.issues,
@@ -53,11 +53,7 @@ async function main() {
       overall_score: parsed.overall_score,
     });
 
-    // Update version status
-    await supabase
-      .from("versions")
-      .update({ status: "analysis_ready" })
-      .eq("id", VERSION_ID);
+    if (insertError) throw insertError;
 
     console.log(`[${VERSION_ID}] Analysis complete. Score: ${parsed.overall_score}`);
   } catch (err) {

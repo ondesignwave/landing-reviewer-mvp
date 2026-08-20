@@ -53,6 +53,10 @@ export default function LandingPage() {
     (activeTab === "figma" && figmaUrl.trim()) ||
     (activeTab === "files" && files.length > 0);
 
+  const scrollToId = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -73,7 +77,12 @@ export default function LandingPage() {
               блоки.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto gap-2" disabled={isLoading}>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto gap-2"
+                disabled={isLoading}
+                onClick={() => scrollToId("analyze-form")}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -86,7 +95,12 @@ export default function LandingPage() {
                   </>
                 )}
               </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={() => scrollToId("how-it-works")}
+              >
                 Как это работает
               </Button>
             </div>
@@ -94,8 +108,48 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* How it works */}
+      <section id="how-it-works" className="py-16 lg:py-24">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Как это работает</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Три шага от ссылки до готового чек-листа правок</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: <FileText className="h-5 w-5" />,
+                title: "1. Загрузите материал",
+                desc: "Ссылка на опубликованный лендинг, публичный Figma-файл или скриншоты/PDF",
+              },
+              {
+                icon: <Zap className="h-5 w-5" />,
+                title: "2. AI анализирует",
+                desc: "За 30–90 секунд разбираем иерархию, типографику, CTA, адаптив и конверсионные блоки",
+              },
+              {
+                icon: <CheckCircle className="h-5 w-5" />,
+                title: "3. Получаете отчёт",
+                desc: "Оценки по 5 критериям и приоритизированный чек-лист правок, готовый к работе",
+              },
+            ].map((item) => (
+              <Card key={item.title} className="h-full">
+                <CardHeader>
+                  <div className="flex items-center gap-2 text-primary mb-2">{item.icon}</div>
+                  <CardTitle className="text-lg">{item.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Upload Form */}
-      <section className="py-16 lg:py-24 bg-muted/30">
+      <section id="analyze-form" className="py-16 lg:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="bg-card border rounded-xl shadow-sm overflow-hidden">
@@ -264,7 +318,7 @@ export default function LandingPage() {
             Первый полный разбор бесплатно. Без регистрации для превью. Платите только если результат
             пригодился.
           </p>
-          <Button size="lg" variant="secondary" className="gap-2">
+          <Button size="lg" variant="secondary" className="gap-2" onClick={() => scrollToId("analyze-form")}>
             <ArrowRight className="h-4 w-4" />
             Начать бесплатно
           </Button>

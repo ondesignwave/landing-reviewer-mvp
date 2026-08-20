@@ -51,13 +51,12 @@ async function main() {
     await browser.close();
 
     // Update version with screenshot URLs
-    await supabase
+    const { error: updateError } = await supabase
       .from("versions")
-      .update({
-        screenshot_urls: screenshotUrls,
-        status: "screenshots_ready",
-      })
+      .update({ screenshot_urls: screenshotUrls })
       .eq("id", VERSION_ID);
+
+    if (updateError) throw updateError;
 
     console.log(`[${VERSION_ID}] Screenshots captured: ${screenshotUrls.length}`);
   } catch (err) {
