@@ -36,7 +36,7 @@ async function main() {
   try {
     // Build prompt with images
     const prompt = buildPrompt();
-    const messages = buildMessages(prompt, screenshots);
+    const messages = await buildMessages(prompt, screenshots);
 
     // Call Ollama
     const analysis = await callOllama(messages);
@@ -94,15 +94,21 @@ function buildPrompt(): string {
 ТОН: экспертный, конкретный, конструктивный. Оценки 1-10. Приоритеты: 1=критично, 2=важно, 3=желательно.`;
 }
 
-function buildMessages(prompt: string, screenshots: string[]) {
-  const imageContents = screenshots.map((url) => ({
-    type: "image_url",
-    image_url: { url },
-  }));
+async function buildMessages(prompt: string, screenshots: string[]) {
+  // Ollama's native /api/chat wants string content plus a separate
+  // base64 `images` array — not OpenAI's image_url content blocks.
+  const images = await Promise.all(
+    screenshots.map(async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to fetch screenshot: ${url}`);
+      const buf = await res.arrayBuffer();
+      return Buffer.from(buf).toString("base64");
+    })
+  );
 
   return [
     { role: "system", content: "Ты — Senior Art Director. Анализируй строго по критериям. Отвечай только валидным JSON." },
-    { role: "user", content: [{ type: "text", text: prompt }, ...imageContents] },
+    { role: "user", content: prompt, images },
   ];
 }
 
