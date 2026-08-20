@@ -102,7 +102,7 @@ async function captureUrl(context: any, url: string): Promise<string[]> {
       await page.waitForTimeout(1000);
 
       const screenshot = await page.screenshot({ fullPage: true, type: "png" });
-      const path = `screenshots/${VERSION_ID}/${vp.name}.png`;
+      const path = `${VERSION_ID}/${vp.name}.png`;
       
       const { error } = await supabase.storage
         .from("screenshots")
@@ -159,7 +159,7 @@ async function captureFigma(context: any, fileKey: string, token?: string): Prom
   for (let i = 0; i < urls.length; i++) {
     const resp = await fetch(urls[i]);
     const blob = await resp.blob();
-    const path = `screenshots/${VERSION_ID}/figma-${i}.png`;
+    const path = `${VERSION_ID}/figma-${i}.png`;
     const { error } = await supabase.storage
       .from("screenshots")
       .upload(path, blob, { contentType: "image/png", upsert: true });

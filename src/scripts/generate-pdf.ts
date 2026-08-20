@@ -60,7 +60,7 @@ async function main() {
     await browser.close();
 
     // Upload to Supabase Storage
-    const path = `pdfs/${VERSION_ID}/report.pdf`;
+    const path = `${VERSION_ID}/report.pdf`;
     const { error: uploadError } = await supabase.storage
       .from("pdfs")
       .upload(path, pdfBuffer, { contentType: "application/pdf", upsert: true });
