@@ -25,19 +25,19 @@ jobs:
         run: npm ci
 
       - name: Cache Playwright browsers
-        id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
+      # Always run this — `playwright install` already checks the cache dir
+      # itself and skips the download when the browser is already present,
+      # so this stays fast on a cache hit. Manually skipping it based on
+      # cache-hit (as before) trusted the cache to always be complete, but
+      # concurrent runs can restore a partial/corrupt cache, which made
+      # capture-screenshots.ts fail immediately with no installed browser.
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-
-      - name: Install Playwright system deps only
-        run: npx playwright install-deps chromium
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
 
       - name: Capture screenshots
         id: capture
