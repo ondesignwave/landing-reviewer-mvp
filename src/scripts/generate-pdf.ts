@@ -130,7 +130,8 @@ function generateReportHTML(report: any, project: any, version: any): string {
     .criteria-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 24px 0; }
     .criteria-card { text-align: center; padding: 16px; border-radius: 8px; background: #f9fafb; }
     .criteria-score { font-size: 32px; font-weight: 700; line-height: 1; }
-    .criteria-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    .criteria-label { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; line-height: 1.3; color: #6b7280; margin-top: 4px; }
+    .criteria-label .criteria-icon { flex-shrink: 0; line-height: 1; }
     .issue { padding: 12px; background: #fef2f2; border-left: 4px solid #ef4444; margin: 8px 0; border-radius: 0 8px 8px 0; }
     .checklist-item { display: flex; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; margin: 8px 0; }
     .priority { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
@@ -166,7 +167,7 @@ function generateReportHTML(report: any, project: any, version: any): string {
         return `
         <div class="criteria-card" style="background: ${getScoreBg(score)};">
           <div class="criteria-score" style="color: ${getScoreColor(score)};">${score}</div>
-          <div class="criteria-label">${c.icon} ${c.label}</div>
+          <div class="criteria-label"><span class="criteria-icon">${c.icon}</span><span>${c.label}</span></div>
         </div>
         `;
       }).join("")}

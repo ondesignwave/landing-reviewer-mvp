@@ -123,10 +123,10 @@ export function Dropzone({
       >
         <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          Перетащите файлы сюда или нажмите для загрузки
+          Перетащите файлы сюда или нажмите для загрузки
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          PNG, JPG, PDF · до {maxSizeMB}MB · макс. {maxFiles} файлов
+          PNG, JPG, PDF · до {maxSizeMB}MB · макс. {maxFiles} файлов
         </p>
       </div>
 

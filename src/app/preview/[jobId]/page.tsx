@@ -8,6 +8,7 @@ import {
   Circle,
   AlertCircle,
   X,
+  Plus,
   ChevronDown,
   ChevronUp,
   FileText,
@@ -27,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { formatRelativeTime, getScoreColor, getScoreTextColor, getScoreBg, cn } from "@/lib/utils";
+import { formatRelativeTime, getScoreTextColor, cn } from "@/lib/utils";
 
 const gradientButtonStyle: React.CSSProperties = {
   background: "linear-gradient(70deg, #bdd3ff 0%, #0b9eec 45%, #da7ad6 100%)",
@@ -36,7 +37,7 @@ const gradientButtonStyle: React.CSSProperties = {
 const CRITERIA = [
   { key: "hierarchy", label: "Визуальная иерархия", icon: IconHierarchy2 },
   { key: "typography", label: "Типографика", icon: IconTypography },
-  { key: "cta_scenario", label: "Сценарий и CTA", icon: IconClick },
+  { key: "cta_scenario", label: "Сценарий и CTA", icon: IconClick },
   { key: "responsive", label: "Адаптивность", icon: IconResize },
   { key: "conversion_blocks", label: "Конверсионные блоки", icon: IconTargetArrow },
 ] as const;
@@ -80,7 +81,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
 
   if (loading) {
     return (
-      <div className="dark hero-gradient min-h-screen flex items-center justify-center">
+      <div className="hero-gradient min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="relative mx-auto mb-4 h-16 w-16">
             <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping" />
@@ -96,12 +97,12 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
 
   if (!data?.version) {
     return (
-      <div className="dark hero-gradient min-h-screen flex items-center justify-center">
+      <div className="hero-gradient min-h-screen flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h2 className="text-xl font-semibold mb-2">Разбор не найден</h2>
           <p className="text-muted-foreground mb-4">Возможно, анализ ещё не завершился или произошла ошибка</p>
-          <Button onClick={() => router.push("/")}>На главную</Button>
+          <Button onClick={() => router.push("/")}>На главную</Button>
         </div>
       </div>
     );
@@ -131,7 +132,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
   const stageIndex = STAGES.findIndex((s) => s.key === stage);
 
   return (
-    <div className="dark hero-gradient min-h-screen">
+    <div className="hero-gradient min-h-screen">
       <header className="border-b sticky top-0 z-10 bg-background/95 backdrop-blur">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -178,7 +179,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
             </div>
             <h2 className="text-h3 font-semibold mb-2">Анализируем {project?.name}</h2>
             <p className="text-sm text-muted-foreground mb-8">
-              Обычно занимает 2–3 минуты · прошло {elapsedLabel}
+              Обычно занимает 3–5 минут · прошло {elapsedLabel}
             </p>
 
             <div className="space-y-3 text-left">
@@ -225,7 +226,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                   {CRITERIA.map((c) => {
                     const score = report.criteria_scores[c.key] || 0;
                     return (
-                      <div key={c.key} className={cn(getScoreBg(score), "rounded-lg p-3")}>
+                      <div key={c.key} className="rounded-lg p-3 bg-muted/40">
                         <c.icon className={cn("h-4 w-4 mx-auto mb-1", getScoreTextColor(score))} />
                         <p className={cn("text-2xl font-bold", getScoreTextColor(score))}>
                           {score}
@@ -279,8 +280,8 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                 <Card key={c.key} className="bg-white/5 border-white/10 backdrop-blur-sm">
                   <CardHeader className="py-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <c.icon className={cn("h-5 w-5", getScoreTextColor(score))} />
+                      <div className="flex items-start gap-3">
+                        <c.icon className={cn("h-5 w-5 mt-0.5 flex-shrink-0", getScoreTextColor(score))} />
                         <div>
                           <CardTitle className="text-lg">{c.label}</CardTitle>
                           <p className="text-sm text-muted-foreground">
@@ -289,7 +290,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={cn("px-3 py-1 rounded-full text-sm font-semibold", getScoreBg(score), getScoreTextColor(score))}>
+                        <span className={cn("px-3 py-1 rounded-full text-sm font-semibold bg-muted", getScoreTextColor(score))}>
                           {score}/10
                         </span>
                         <Button
@@ -374,7 +375,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
               className="gap-2 border-0 text-white hover:opacity-90"
               style={gradientButtonStyle}
             >
-              <X className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
               Новый разбор
             </Button>
           </div>

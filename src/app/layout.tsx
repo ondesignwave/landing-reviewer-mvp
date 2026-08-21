@@ -15,9 +15,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Landing Reviewer — AI-ревью лендингов от Senior Art Director",
+  title: "Landing Reviewer — AI-ревью лендингов от Senior Art Director",
   description:
-    "Загрузите ссылку на Figma, скриншоты или URL — получите экспертный разбор по 5 критериям за 60 секунд. Визуальная иерархия, типографика, CTA, адаптив, конверсионные блоки.",
+    "Загрузите ссылку на Figma, скриншоты или URL — получите экспертный разбор по 5 критериям за 5 минут. Визуальная иерархия, типографика, CTA, адаптив, конверсионные блоки.",
   keywords: [
     "AI ревью лендинга",
     "арт-директор",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Landing Reviewer" }],
   openGraph: {
     title: "Landing Reviewer — AI-ревью лендингов",
-    description: "Экспертный разбор дизайна за 60 секунд",
+    description: "Экспертный разбор дизайна за 5 минут",
     type: "website",
   },
 };
@@ -46,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru" className="dark" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >

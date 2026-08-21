@@ -127,14 +127,14 @@ export default function LandingPage() {
           <div className="max-w-3xl mx-auto text-center">
             <Badge className="mb-6 inline-flex items-center gap-2 border-white/20 bg-white/10 text-white hover:bg-white/10">
               <Zap className="h-3 w-3" />
-              MVP — Бесплатно на время бета-теста
+              MVP — Бесплатно на время бета-теста
             </Badge>
             <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-balance mb-6 text-white">
-              AI-ревью лендинга за{" "}
-              <span className="text-primary">60 секунд</span>
+              AI-ревью лендинга за{" "}
+              <span className="text-primary">5 минут</span>
             </h1>
             <p className="text-lg lg:text-xl text-white/70 mb-8 max-w-2xl mx-auto">
-              Загрузите ссылку на Figma, скриншоты или URL — получите экспертный разбор как от
+              Загрузите ссылку на Figma, скриншоты или URL — получите экспертный разбор как от
               Senior Art Director. Визуальная иерархия, типографика, CTA, адаптив, конверсионные
               блоки.
             </p>
@@ -164,7 +164,7 @@ export default function LandingPage() {
                 className="w-full sm:w-auto border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
                 onClick={() => scrollToId("how-it-works")}
               >
-                Как это работает
+                Как это работает
               </Button>
             </div>
           </div>
@@ -175,8 +175,8 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">Как это работает</h2>
-            <p className="text-white/70 max-w-2xl mx-auto">Три шага от ссылки до готового чек-листа правок</p>
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">Как это работает</h2>
+            <p className="text-white/70 max-w-2xl mx-auto">Три шага от ссылки до готового чек-листа правок</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -184,17 +184,17 @@ export default function LandingPage() {
               {
                 icon: <IconUpload className="h-5 w-5" />,
                 title: "1. Загрузите материал",
-                desc: "Ссылка на опубликованный лендинг, публичный Figma-файл или скриншоты/PDF",
+                desc: "Ссылка на опубликованный лендинг, публичный Figma-файл или скриншоты/PDF",
               },
               {
                 icon: <IconSparkles className="h-5 w-5" />,
                 title: "2. AI анализирует",
-                desc: "За 2–3 минуты разбираем иерархию, типографику, CTA, адаптив и конверсионные блоки",
+                desc: "За 3–5 минут разбираем иерархию, типографику, CTA, адаптив и конверсионные блоки",
               },
               {
                 icon: <IconFileCheck className="h-5 w-5" />,
                 title: "3. Получаете отчёт",
-                desc: "Оценки по 5 критериям и приоритизированный чек-лист правок, готовый к работе",
+                desc: "Оценки по 5 критериям и приоритизированный чек-лист правок, готовый к работе",
               },
             ].map((item) => (
               <Card key={item.title} className="h-full bg-white/5 border-white/10 backdrop-blur-sm text-white hover:border-white/20">
@@ -249,7 +249,7 @@ export default function LandingPage() {
 
                 {activeTab === "url" && (
                   <div className="space-y-4">
-                    <label className="block text-sm font-medium">Ссылка на опубликованный лендинг</label>
+                    <label className="block text-sm font-medium">Ссылка на опубликованный лендинг</label>
                     <Input
                       type="url"
                       placeholder="https://example.com/landing"
@@ -259,14 +259,14 @@ export default function LandingPage() {
                       required
                     />
                     <p className="text-sm text-muted-foreground">
-                      Мы сделаем скриншоты в 3 разрешениях (десктоп, планшет, мобильный) и проанализируем
+                      Мы сделаем скриншоты в 3 разрешениях (десктоп, планшет, мобильный) и проанализируем
                     </p>
                   </div>
                 )}
 
                 {activeTab === "figma" && (
                   <div className="space-y-4">
-                    <label className="block text-sm font-medium">Публичная ссылка на Figma-файл</label>
+                    <label className="block text-sm font-medium">Публичная ссылка на Figma-файл</label>
                     <Input
                       type="url"
                       placeholder="https://www.figma.com/file/FILE_KEY/... или https://www.figma.com/design/FILE_KEY/..."
@@ -278,13 +278,13 @@ export default function LandingPage() {
                     <label className="block text-sm font-medium">Figma Personal Access Token (опционально)</label>
                     <Input
                       type="password"
-                      placeholder="figd_... (нужен для приватных файлов)"
+                      placeholder="figd_... (нужен для приватных файлов)"
                       value={figmaToken}
                       onChange={(e) => setFigmaToken(e.target.value)}
                       disabled={isLoading}
                     />
                     <p className="text-sm text-muted-foreground">
-                      Для публичных файлов токен не нужен. Мы парсим структуру, стили, компоненты и
+                      Для публичных файлов токен не нужен. Мы парсим структуру, стили, компоненты и
                       автолейауты.
                     </p>
                   </div>
@@ -332,7 +332,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">Что вы получаете</h2>
             <p className="text-white/70 max-w-2xl mx-auto">
-              Структурированный отчёт по 5 критериям с оценками, проблемами и приоритизированным чек-листом правок
+              Структурированный отчёт по 5 критериям с оценками, проблемами и приоритизированным чек-листом правок
             </p>
           </div>
 
@@ -350,12 +350,12 @@ export default function LandingPage() {
               },
               {
                 icon: <IconClick className="h-5 w-5" />,
-                title: "Сценарий и CTA",
+                title: "Сценарий и CTA",
                 desc: "Пользовательский путь, ясность действий, микрокопирайтинг, приоритет кнопок",
               },
               {
                 icon: <IconResize className="h-5 w-5" />,
-                title: "Адаптив и резиновая вёрстка",
+                title: "Адаптив и резиновая вёрстка",
                 desc: "Breakpoints, переполнение, тач-таргеты, безопасные зоны, контент-шифт",
               },
               {
@@ -383,7 +383,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">Готовы проверить свой лендинг?</h2>
           <p className="text-white/70 mb-8 max-w-2xl mx-auto">
-            Первый полный разбор бесплатно. Без регистрации для превью. Платите только если результат
+            Первый полный разбор бесплатно. Без регистрации для превью. Платите только если результат
             пригодился.
           </p>
           <Button
@@ -401,7 +401,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-12 border-t border-white/10">
         <div className="container mx-auto px-4 text-center text-sm text-white/50 space-y-2">
-          <p>Landing Reviewer — MVP для веб-дизайнеров. Сделано с Next.js, Supabase, Inngest.</p>
+          <p>Landing Reviewer — MVP для веб-дизайнеров. Сделано с Next.js, Supabase, Inngest.</p>
           <p>
             <Link href="/privacy" className="hover:text-white hover:underline">
               Политика обработки персональных данных
@@ -426,7 +426,7 @@ export default function LandingPage() {
                 <CheckCircle className="h-12 w-12 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Разбор готов!</h3>
                 <p className="text-muted-foreground mb-6">
-                  Оценка {jobData.report?.overall_score?.toFixed?.(1) ?? "—"}/10. Полный отчёт — на странице превью.
+                  Оценка {jobData.report?.overall_score?.toFixed?.(1) ?? "—"}/10. Полный отчёт — на странице превью.
                 </p>
                 <Button
                   onClick={() => window.open(`/preview/${jobId}`, "_blank")}
@@ -457,8 +457,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Анализ запущен</h3>
                 <p className="text-muted-foreground mb-6">
-                  Обычно занимает 2–3 минуты{jobElapsedLabel && ` · прошло ${jobElapsedLabel}`}. Статус
-                  здесь обновится сам, когда будет готово — можно просто подождать на этой странице.
+                  Обычно занимает 3–5 минут{jobElapsedLabel && ` · прошло ${jobElapsedLabel}`}. Статус
+                  здесь обновится сам, когда будет готово — можно просто подождать на этой странице.
                 </p>
                 <Button
                   onClick={() => window.open(`/preview/${jobId}`, "_blank")}

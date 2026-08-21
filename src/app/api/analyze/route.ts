@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
           .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
 
         if (count && count >= 1) {
-          return NextResponse.json({ error: "Free тариф: 1 разбор в неделю. Обновите до Pro." }, { status: 403 });
+          return NextResponse.json({ error: "Free тариф: 1 разбор в неделю. Обновите до Pro." }, { status: 403 });
         }
       }
     }

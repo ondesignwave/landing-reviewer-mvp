@@ -103,7 +103,9 @@ async function captureUrl(context: any, url: string): Promise<string[]> {
 
       // Cap capture height so very long pages don't blow up the vision
       // model's context (and local Ollama's available RAM for KV cache).
-      const MAX_CAPTURE_HEIGHT = 4000;
+      // Report thumbnails are cropped to 16:10 anyway (see preview page),
+      // so a lower cap only trims what goes to the model, not what's shown.
+      const MAX_CAPTURE_HEIGHT = 2400;
       const pageHeight = await page.evaluate(() => document.body.scrollHeight);
       const captureHeight = Math.min(pageHeight, MAX_CAPTURE_HEIGHT);
       const screenshot = await page.screenshot({
