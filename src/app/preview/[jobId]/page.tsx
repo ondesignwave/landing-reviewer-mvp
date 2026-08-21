@@ -10,25 +10,35 @@ import {
   X,
   ChevronDown,
   ChevronUp,
-  Eye,
   FileText,
   Download,
   Share2,
   Camera,
   Sparkles,
 } from "lucide-react";
+import {
+  IconHierarchy2,
+  IconTypography,
+  IconClick,
+  IconResize,
+  IconTargetArrow,
+} from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatRelativeTime, getScoreColor, getScoreTextColor, getScoreBg, cn } from "@/lib/utils";
 
+const gradientButtonStyle: React.CSSProperties = {
+  background: "linear-gradient(70deg, #bdd3ff 0%, #0b9eec 45%, #da7ad6 100%)",
+};
+
 const CRITERIA = [
-  { key: "hierarchy", label: "Визуальная иерархия", icon: Eye },
-  { key: "typography", label: "Типографика", icon: FileText },
-  { key: "cta_scenario", label: "Сценарий и CTA", icon: CheckCircle },
-  { key: "responsive", label: "Адаптивность", icon: Download },
-  { key: "conversion_blocks", label: "Конверсионные блоки", icon: Share2 },
+  { key: "hierarchy", label: "Визуальная иерархия", icon: IconHierarchy2 },
+  { key: "typography", label: "Типографика", icon: IconTypography },
+  { key: "cta_scenario", label: "Сценарий и CTA", icon: IconClick },
+  { key: "responsive", label: "Адаптивность", icon: IconResize },
+  { key: "conversion_blocks", label: "Конверсионные блоки", icon: IconTargetArrow },
 ] as const;
 
 export default function PreviewPage({ params }: { params: { jobId: string } }) {
@@ -70,7 +80,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="dark hero-gradient min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="relative mx-auto mb-4 h-16 w-16">
             <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping" />
@@ -86,7 +96,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
 
   if (!data?.version) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="dark hero-gradient min-h-screen flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h2 className="text-xl font-semibold mb-2">Разбор не найден</h2>
@@ -121,7 +131,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
   const stageIndex = STAGES.findIndex((s) => s.key === stage);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="dark hero-gradient min-h-screen">
       <header className="border-b sticky top-0 z-10 bg-background/95 backdrop-blur">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -198,7 +208,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
       {isReady && (
         <div className="container mx-auto px-4 py-8">
           {/* Overall Score */}
-          <Card className="mb-8">
+          <Card className="mb-8 bg-white/5 border-white/10 backdrop-blur-sm">
             <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="text-center md:text-left">
@@ -231,7 +241,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
 
           {/* Screenshots */}
           {version.screenshot_urls && version.screenshot_urls.length > 0 && (
-            <Card className="mb-8">
+            <Card className="mb-8 bg-white/5 border-white/10 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   Скриншоты
@@ -266,7 +276,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
               const score = report.criteria_scores[c.key] || 0;
               const issues = report.issues[c.key] || [];
               return (
-                <Card key={c.key}>
+                <Card key={c.key} className="bg-white/5 border-white/10 backdrop-blur-sm">
                   <CardHeader className="py-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -310,10 +320,10 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
             })}
 
             {/* Checklist */}
-            <Card>
+            <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   Приоритизированный чек-лист правок
                 </CardTitle>
               </CardHeader>
@@ -346,15 +356,24 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-4 justify-center">
-            <Button variant="outline" className="gap-2">
+            <Button
+              variant="outline"
+              className="gap-2"
+              disabled={!report.pdf_url}
+              onClick={() => window.open(report.pdf_url, "_blank")}
+            >
               <Download className="h-4 w-4" />
-              Экспорт в PDF (скоро)
+              {report.pdf_url ? "Скачать PDF" : "PDF готовится..."}
             </Button>
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" disabled>
               <Share2 className="h-4 w-4" />
               Поделиться (скоро)
             </Button>
-            <Button onClick={() => router.push("/")} className="gap-2">
+            <Button
+              onClick={() => router.push("/")}
+              className="gap-2 border-0 text-white hover:opacity-90"
+              style={gradientButtonStyle}
+            >
               <X className="h-4 w-4" />
               Новый разбор
             </Button>
