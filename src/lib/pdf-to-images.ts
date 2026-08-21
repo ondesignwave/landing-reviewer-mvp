@@ -4,10 +4,10 @@ const MAX_PAGES = 5;
 
 export async function pdfToImageFiles(file: File): Promise<File[]> {
   const pdfjsLib = await import("pdfjs-dist");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/build/pdf.worker.min.mjs",
-    import.meta.url
-  ).toString();
+  // Served as a static file from /public — letting webpack bundle+minify
+  // this worker (e.g. via `new URL(..., import.meta.url)`) breaks the
+  // production build: Terser chokes on the worker's own ESM syntax.
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
   const buffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
