@@ -34,6 +34,7 @@ export default function LandingPage() {
   const [figmaToken, setFigmaToken] = React.useState("");
   const [files, setFiles] = React.useState<File[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [uploadStatus, setUploadStatus] = React.useState<string | null>(null);
   const [jobId, setJobId] = React.useState<string | null>(null);
   const [jobData, setJobData] = React.useState<any>(null);
   const [now, setNow] = React.useState(() => Date.now());
@@ -72,11 +73,21 @@ export default function LandingPage() {
     setJobData(null);
   };
 
+  const uploadFile = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Не удалось загрузить "${file.name}"`);
+    return data.url as string;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setJobData(null);
     setIsLoading(true);
+    setUploadStatus(null);
 
     try {
       let body: any = { source_type: activeTab };
@@ -84,8 +95,28 @@ export default function LandingPage() {
       else if (activeTab === "figma") {
         body.figma_url = figmaUrl;
         if (figmaToken) body.figma_token = figmaToken;
-      } else body.files = files.map((f) => f.name); // placeholder
+      } else {
+        const { pdfToImageFiles } = await import("@/lib/pdf-to-images");
+        const screenshotUrls: string[] = [];
+        let uploaded = 0;
+        const filesToUpload: File[] = [];
+        for (const file of files) {
+          if (file.type === "application/pdf") {
+            setUploadStatus(`Рендерю страницы "${file.name}"...`);
+            filesToUpload.push(...(await pdfToImageFiles(file)));
+          } else {
+            filesToUpload.push(file);
+          }
+        }
+        for (const file of filesToUpload) {
+          uploaded++;
+          setUploadStatus(`Загружаю файл ${uploaded} из ${filesToUpload.length}...`);
+          screenshotUrls.push(await uploadFile(file));
+        }
+        body.screenshot_urls = screenshotUrls;
+      }
 
+      setUploadStatus(null);
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -99,6 +130,7 @@ export default function LandingPage() {
       setError(err instanceof Error ? err.message : "Что-то пошло не так");
     } finally {
       setIsLoading(false);
+      setUploadStatus(null);
     }
   };
 
@@ -314,7 +346,7 @@ export default function LandingPage() {
                   {isLoading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      Запускаю анализ...
+                      {uploadStatus || "Запускаю анализ..."}
                     </>
                   ) : (
                     "Запустить AI-разбор →"

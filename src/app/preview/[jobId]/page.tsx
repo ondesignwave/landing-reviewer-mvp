@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { formatRelativeTime, getScoreTextColor, cn } from "@/lib/utils";
+import { formatRelativeTime, getScoreTextColor, pluralizeRu, cn } from "@/lib/utils";
 
 const gradientButtonStyle: React.CSSProperties = {
   background: "linear-gradient(70deg, #bdd3ff 0%, #0b9eec 45%, #da7ad6 100%)",
@@ -247,7 +247,8 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                 <CardTitle className="flex items-center justify-between">
                   Скриншоты
                   <span className="text-sm font-normal text-muted-foreground">
-                    {version.screenshot_urls.length} ракурсов
+                    {version.screenshot_urls.length}{" "}
+                    {pluralizeRu(version.screenshot_urls.length, "ракурс", "ракурса", "ракурсов")}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -262,7 +263,9 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                         loading="lazy"
                       />
                       <div className="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                        {["Десктоп", "Планшет", "Мобильный"][i] || `Вид ${i + 1}`}
+                        {project?.source_type === "url"
+                          ? ["Десктоп", "Планшет", "Мобильный"][i] || `Вид ${i + 1}`
+                          : `Файл ${i + 1}`}
                       </div>
                     </div>
                   ))}
@@ -285,7 +288,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                         <div>
                           <CardTitle className="text-lg">{c.label}</CardTitle>
                           <p className="text-sm text-muted-foreground">
-                            {issues.length} замечание{issues.length === 1 ? "" : issues.length < 5 ? "я" : "ий"}
+                            {issues.length} {pluralizeRu(issues.length, "замечание", "замечания", "замечаний")}
                           </p>
                         </div>
                       </div>

@@ -178,7 +178,7 @@ function generateReportHTML(report: any, project: any, version: any): string {
       ${(version.screenshot_urls || []).map((url: string, i: number) => `
         <div class="screenshot">
           <img src="${url}" alt="Screenshot ${i+1}">
-          <div class="screenshot-label">${["Десктоп", "Планшет", "Мобильный"][i] || `Вид ${i+1}`}</div>
+          <div class="screenshot-label">${project.source_type === "url" ? ["Десктоп", "Планшет", "Мобильный"][i] || `Вид ${i+1}` : `Файл ${i+1}`}</div>
         </div>
       `).join("")}
     </div>

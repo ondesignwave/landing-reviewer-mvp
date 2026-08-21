@@ -34,6 +34,18 @@ async function main() {
   const sourceUrl = project.source_url;
   const figmaFileKey = project.figma_file_key;
 
+  // Uploaded files are already screenshots — the API route seeds
+  // screenshot_urls on the version row itself, so there's nothing to
+  // capture. Skip launching a browser entirely for this source type.
+  if (sourceType === "files") {
+    if (!version.screenshot_urls?.length) {
+      await markFailed(VERSION_ID, "No uploaded files found");
+      process.exit(1);
+    }
+    console.log(`[${VERSION_ID}] Files already uploaded, skipping capture: ${version.screenshot_urls.length}`);
+    return;
+  }
+
   let screenshotUrls: string[] = [];
 
   try {

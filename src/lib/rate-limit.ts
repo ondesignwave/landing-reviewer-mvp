@@ -12,3 +12,12 @@ export const rateLimit = new Ratelimit({
   analytics: true,
   prefix: "ratelimit:analyze",
 });
+
+// Higher threshold: one "analyze" submission uploads multiple files
+// (up to 10) before it ever calls /api/analyze itself.
+export const uploadRateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(30, "1 m"),
+  analytics: true,
+  prefix: "ratelimit:upload",
+});

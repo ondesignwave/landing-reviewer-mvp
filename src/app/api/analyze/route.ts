@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { pluralizeRu } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
     console.log('=== END DEBUG ===');
 
     const body = await request.json();
-    const { source_type, url, figma_url, figma_token, files } = body;
+    const { source_type, url, figma_url, figma_token, screenshot_urls } = body;
 
     if (!source_type || !["url", "figma", "files"].includes(source_type)) {
       return NextResponse.json({ error: "Неверный тип источника" }, { status: 400 });
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (source_type === "figma" && !figma_url) {
       return NextResponse.json({ error: "Figma URL обязателен" }, { status: 400 });
     }
-    if (source_type === "files" && (!files || files.length === 0)) {
+    if (source_type === "files" && (!screenshot_urls || screenshot_urls.length === 0)) {
       return NextResponse.json({ error: "Файлы обязательны" }, { status: 400 });
     }
 
@@ -61,7 +62,8 @@ export async function POST(request: NextRequest) {
     }
 
     const projectName = source_type === "url" ? new URL(url).hostname :
-      source_type === "figma" ? "Figma файл" : `${files.length} файлов`;
+      source_type === "figma" ? "Figma файл" :
+      `${screenshot_urls.length} ${pluralizeRu(screenshot_urls.length, "файл", "файла", "файлов")}`;
 
     const { data: project, error: projectError } = await supabase
       .from("projects")
@@ -86,6 +88,9 @@ export async function POST(request: NextRequest) {
         project_id: project.id,
         version_num: 1,
         status: "processing",
+        // Already-uploaded files skip the screenshot-capture step in CI —
+        // seed the URLs now so that step has nothing left to do.
+        screenshot_urls: source_type === "files" ? screenshot_urls : null,
       })
       .select()
       .single();
@@ -107,7 +112,6 @@ export async function POST(request: NextRequest) {
       url,
       figmaUrl: figma_url,
       figmaToken: figma_token,
-      fileNames: files,
       userId: user?.id,
     });
 
