@@ -1,8 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-const ALLOWED_TYPES = ["image/png", "image/jpeg"];
-const MAX_SIZE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
+// Vercel serverless functions hard-cap the request body at ~4.5MB — a
+// bigger file never reaches this handler at all, so this exists as a
+// clear error for anything that slips through client-side compression.
+const MAX_SIZE_BYTES = 4 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,7 +32,7 @@ export async function POST(request: NextRequest) {
       );
     }
     if (file.size > MAX_SIZE_BYTES) {
-      return NextResponse.json({ error: "Файл превышает 10MB" }, { status: 400 });
+      return NextResponse.json({ error: "Файл превышает 4MB" }, { status: 400 });
     }
 
     const supabase = createClient(

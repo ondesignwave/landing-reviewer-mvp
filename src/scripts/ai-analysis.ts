@@ -93,7 +93,7 @@ function buildPrompt(): string {
   "overall_score": <среднее по критериям, число с одним знаком после точки>
 }
 
-ТОН: экспертный, конкретный, конструктивный. Оценки — целые числа 1-10, у разных лендингов они должны отличаться. Приоритеты: 1=критично, 2=важно, 3=желательно.`;
+ТОН: экспертный, конкретный, конструктивный. Оценки — целые числа 1-10, у разных лендингов они должны отличаться. Чек-лист — ВСЕГДА ровно 3 пункта, priority строго 1, 2 и 3 — каждое значение ровно один раз, без повторов и без других чисел.`;
 }
 
 async function buildMessages(prompt: string, screenshots: string[]) {
@@ -147,21 +147,33 @@ function parseAnalysis(text: string) {
   const parsed = JSON.parse(jsonMatch[0]);
   
   // Validate required fields
-  const required = ["criteria_scores", "issues", "checklist", "overall_score"];
+  const required = ["criteria_scores", "issues", "checklist"];
   for (const field of required) {
     if (!(field in parsed)) throw new Error(`Missing field: ${field}`);
   }
-  
+
   // Ensure all criteria present
   const criteria = ["hierarchy", "typography", "cta_scenario", "responsive", "conversion_blocks"];
   for (const c of criteria) {
     if (!(c in parsed.criteria_scores)) parsed.criteria_scores[c] = 5;
     if (!(c in parsed.issues)) parsed.issues[c] = [];
   }
-  
-  // Validate checklist format
+
+  // Validate checklist format — the model doesn't always follow the
+  // "exactly 3 items, priorities 1/2/3 once each" instruction, so enforce
+  // it here rather than trusting the raw output (seen: duplicate/missing
+  // priorities, e.g. 1,2,3,3 instead of 1,2,3).
   if (!Array.isArray(parsed.checklist)) parsed.checklist = [];
-  
+  parsed.checklist = parsed.checklist
+    .slice(0, 3)
+    .map((item: any, i: number) => ({ ...item, priority: i + 1 }));
+
+  // The model is asked for overall_score too, but LLM arithmetic on 5
+  // numbers isn't reliable — always compute it ourselves instead of
+  // trusting whatever it wrote.
+  const scores = criteria.map((c) => parsed.criteria_scores[c]);
+  parsed.overall_score = Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10;
+
   return parsed;
 }
 

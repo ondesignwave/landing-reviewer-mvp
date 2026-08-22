@@ -77,7 +77,19 @@ export default function LandingPage() {
     const formData = new FormData();
     formData.append("file", file);
     const res = await fetch("/api/upload", { method: "POST", body: formData });
-    const data = await res.json();
+
+    // A body over Vercel's ~4.5MB function limit never reaches our handler —
+    // the platform returns its own plain-text error page, not JSON.
+    let data: any = null;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error(
+        res.status === 413
+          ? `"${file.name}" слишком большой файл`
+          : `Не удалось загрузить "${file.name}"`
+      );
+    }
     if (!res.ok) throw new Error(data.error || `Не удалось загрузить "${file.name}"`);
     return data.url as string;
   };
@@ -97,6 +109,7 @@ export default function LandingPage() {
         if (figmaToken) body.figma_token = figmaToken;
       } else {
         const { pdfToImageFiles } = await import("@/lib/pdf-to-images");
+        const { compressImageFile } = await import("@/lib/image-compress");
         const screenshotUrls: string[] = [];
         let uploaded = 0;
         const filesToUpload: File[] = [];
@@ -111,7 +124,8 @@ export default function LandingPage() {
         for (const file of filesToUpload) {
           uploaded++;
           setUploadStatus(`Загружаю файл ${uploaded} из ${filesToUpload.length}...`);
-          screenshotUrls.push(await uploadFile(file));
+          const compressed = await compressImageFile(file);
+          screenshotUrls.push(await uploadFile(compressed));
         }
         body.screenshot_urls = screenshotUrls;
       }
@@ -457,9 +471,10 @@ export default function LandingPage() {
               <>
                 <CheckCircle className="h-12 w-12 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Разбор готов!</h3>
-                <p className="text-muted-foreground mb-6">
-                  Оценка {jobData.report?.overall_score?.toFixed?.(1) ?? "—"}/10. Полный отчёт — на странице превью.
+                <p className="text-muted-foreground mb-1 tabular-nums">
+                  Оценка {jobData.report?.overall_score?.toFixed?.(1) ?? "—"}/10
                 </p>
+                <p className="text-muted-foreground mb-6">Полный отчёт — на странице превью</p>
                 <Button
                   onClick={() => window.open(`/preview/${jobId}`, "_blank")}
                   className="w-full border-0 text-white hover:opacity-90"
@@ -488,9 +503,14 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Анализ запущен</h3>
+                <p className="text-muted-foreground mb-1">Обычно занимает 3–5 минут</p>
+                <p className="text-muted-foreground mb-1 tabular-nums">
+                  Прошло {jobElapsedLabel || "0:00"}
+                </p>
                 <p className="text-muted-foreground mb-6">
-                  Обычно занимает 3–5 минут{jobElapsedLabel && ` · прошло ${jobElapsedLabel}`}. Статус
-                  здесь обновится сам, когда будет готово — можно просто подождать на этой странице.
+                  Статус обновится сам, когда будет готово
+                  <br />
+                  можно просто подождать на этой странице
                 </p>
                 <Button
                   onClick={() => window.open(`/preview/${jobId}`, "_blank")}

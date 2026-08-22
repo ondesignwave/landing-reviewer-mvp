@@ -148,7 +148,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
           </div>
           <div className="flex items-center gap-2">
             {isProcessing && (
-              <Badge className="border-primary/20 bg-primary/10 text-primary gap-1.5 hover:bg-primary/10">
+              <Badge className="border-primary/20 bg-primary/10 text-primary gap-1.5 hover:bg-primary/10 tabular-nums">
                 <Loader2 className="h-3 w-3 animate-spin" />
                 Обработка · {elapsedLabel}
               </Badge>
@@ -178,9 +178,8 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
               </div>
             </div>
             <h2 className="text-h3 font-semibold mb-2">Анализируем {project?.name}</h2>
-            <p className="text-sm text-muted-foreground mb-8">
-              Обычно занимает 3–5 минут · прошло {elapsedLabel}
-            </p>
+            <p className="text-sm text-muted-foreground mb-1">Обычно занимает 3–5 минут</p>
+            <p className="text-sm text-muted-foreground mb-8 tabular-nums">Прошло {elapsedLabel}</p>
 
             <div className="space-y-3 text-left">
               {STAGES.map((s, i) => {
