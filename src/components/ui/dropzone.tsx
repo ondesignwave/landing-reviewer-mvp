@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { cn, pluralizeRu } from "@/lib/utils";
 import { Upload, File, Image, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -47,13 +48,19 @@ export function Dropzone({
       else validFiles.push(file);
     }
 
-    if (files.length + validFiles.length > maxFiles) {
-      errors.push(`Максимум ${maxFiles} файлов`);
-      validFiles.splice(maxFiles - files.length);
+    const remaining = maxFiles - files.length;
+    if (validFiles.length > remaining) {
+      const skipped = validFiles.length - Math.max(0, remaining);
+      errors.push(
+        remaining > 0
+          ? `Добавлено ${remaining} из ${validFiles.length} — осталось место только на ${remaining} ${pluralizeRu(remaining, "файл", "файла", "файлов")} (пропущено ${skipped})`
+          : `Лимит ${maxFiles} ${pluralizeRu(maxFiles, "файл", "файла", "файлов")} уже достигнут`
+      );
+      validFiles.splice(Math.max(0, remaining));
     }
 
     if (errors.length) {
-      alert(errors.join("\n"));
+      errors.forEach((message) => toast.error(message));
     }
 
     const updatedFiles = [...files, ...validFiles];
@@ -65,6 +72,13 @@ export function Dropzone({
     const updated = files.filter((_, i) => i !== index);
     setFiles(updated);
     onFilesChange(updated);
+  };
+
+  const confirmRemoveFile = (index: number, name: string) => {
+    toast(`Удалить «${name}»?`, {
+      action: { label: "Удалить", onClick: () => removeFile(index) },
+      cancel: { label: "Отмена", onClick: () => {} },
+    });
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -86,10 +100,6 @@ export function Dropzone({
     }
   };
 
-  const handleClick = () => {
-    if (!disabled) inputRef.current?.click();
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) handleFiles(e.target.files);
     e.target.value = "";
@@ -97,23 +107,11 @@ export function Dropzone({
 
   return (
     <div className={cn("relative", className)}>
-      <input
-        ref={inputRef}
-        type="file"
-        multiple
-        accept={acceptedTypes.join(",")}
-        onChange={handleInputChange}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        disabled={disabled}
-        aria-label="Загрузить файлы"
-      />
-
       <div
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        onClick={handleClick}
         className={cn(
           "relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl transition-all",
           "bg-muted/30 hover:bg-muted/50",
@@ -121,12 +119,27 @@ export function Dropzone({
           disabled && "opacity-50 cursor-not-allowed"
         )}
       >
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          accept={acceptedTypes.join(",")}
+          onChange={handleInputChange}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          disabled={disabled}
+          aria-label="Загрузить файлы"
+        />
         <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
         <p className="mt-4 text-center text-sm text-muted-foreground">
           Перетащите файлы сюда или нажмите для загрузки
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          PNG, JPG, PDF · до {maxSizeMB}MB · макс. {maxFiles} файлов
+          PNG, JPG, PDF · до {maxSizeMB}MB ·{" "}
+          {files.length === 0
+            ? `макс. ${maxFiles} ${pluralizeRu(maxFiles, "файл", "файла", "файлов")}`
+            : files.length >= maxFiles
+              ? "лимит файлов достигнут"
+              : `можно добавить ещё ${maxFiles - files.length} ${pluralizeRu(maxFiles - files.length, "файл", "файла", "файлов")}`}
         </p>
       </div>
 
@@ -155,7 +168,7 @@ export function Dropzone({
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={() => removeFile(index)}
+                onClick={() => confirmRemoveFile(index, file.name)}
                 aria-label={`Удалить ${file.name}`}
               >
                 <X className="h-4 w-4" />

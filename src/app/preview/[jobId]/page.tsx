@@ -170,7 +170,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
 
       {isProcessing && (
         <div className="container mx-auto px-4 py-16">
-          <div className="max-w-sm mx-auto text-center">
+          <div className="max-w-sm mx-auto">
             <div className="relative mx-auto mb-6 h-20 w-20">
               <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping" />
               <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
@@ -179,9 +179,9 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
             </div>
             <h2 className="text-h3 font-semibold mb-2">Анализируем {project?.name}</h2>
             <p className="text-sm text-muted-foreground mb-1">Обычно занимает 3–5 минут</p>
-            <p className="text-sm text-muted-foreground mb-8 tabular-nums">Прошло {elapsedLabel}</p>
+            <p className="text-sm text-foreground font-medium mb-8 tabular-nums">Прошло {elapsedLabel}</p>
 
-            <div className="space-y-3 text-left">
+            <div className="space-y-3">
               {STAGES.map((s, i) => {
                 const done = i < stageIndex;
                 const active = i === stageIndex;
@@ -227,8 +227,8 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                     return (
                       <div key={c.key} className="rounded-lg p-3 bg-muted/40">
                         <c.icon className={cn("h-4 w-4 mx-auto mb-1", getScoreTextColor(score))} />
-                        <p className={cn("text-2xl font-bold", getScoreTextColor(score))}>
-                          {score}
+                        <p className={cn("text-2xl font-bold tabular-nums", getScoreTextColor(score))}>
+                          {score.toFixed(1)}
                         </p>
                         <p className="text-xs text-muted-foreground">{c.label}</p>
                       </div>
@@ -292,8 +292,8 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={cn("px-3 py-1 rounded-full text-sm font-semibold bg-muted", getScoreTextColor(score))}>
-                          {score}/10
+                        <span className={cn("px-3 py-1 rounded-full text-sm font-semibold bg-muted tabular-nums", getScoreTextColor(score))}>
+                          {score.toFixed(1)}/10
                         </span>
                         <Button
                           variant="ghost"
@@ -378,7 +378,7 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
               style={gradientButtonStyle}
             >
               <Plus className="h-4 w-4" />
-              Новый разбор
+              Начать бесплатный разбор
             </Button>
           </div>
         </div>

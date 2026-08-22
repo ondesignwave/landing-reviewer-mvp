@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter_Tight({
@@ -15,6 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://landing-reviewer-eight.vercel.app"),
   title: "Landing Reviewer — AI-ревью лендингов от Senior Art Director",
   description:
     "Загрузите ссылку на Figma, скриншоты или URL — получите экспертный разбор по 5 критериям за 5 минут. Визуальная иерархия, типографика, CTA, адаптив, конверсионные блоки.",
@@ -30,6 +32,13 @@ export const metadata: Metadata = {
     title: "Landing Reviewer — AI-ревью лендингов",
     description: "Экспертный разбор дизайна за 5 минут",
     type: "website",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Landing Reviewer — AI-ревью лендингов",
+    description: "Экспертный разбор дизайна за 5 минут",
+    images: ["/opengraph-image.png"],
   },
 };
 
@@ -51,6 +60,7 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         {children}
+        <Toaster theme="dark" richColors position="top-center" />
       </body>
     </html>
   );

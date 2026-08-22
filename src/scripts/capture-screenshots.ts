@@ -55,7 +55,7 @@ async function main() {
     if (sourceType === "url" && sourceUrl) {
       screenshotUrls = await captureUrl(context, sourceUrl);
     } else if (sourceType === "figma" && figmaFileKey) {
-      screenshotUrls = await captureFigma(context, figmaFileKey, project.figma_token);
+      screenshotUrls = await captureFigma(context, figmaFileKey);
     } else {
       throw new Error("Unsupported source type or missing URL/Figma key");
     }
@@ -142,14 +142,13 @@ async function captureUrl(context: any, url: string): Promise<string[]> {
   return urls;
 }
 
-async function captureFigma(context: any, fileKey: string, token?: string): Promise<string[]> {
-  // Use Figma REST API to get image URLs for nodes
+async function captureFigma(context: any, fileKey: string): Promise<string[]> {
+  // Use Figma REST API to get image URLs for nodes. Public files only —
+  // we don't collect account-wide Figma access tokens from users.
   // For MVP: render the first page at 3 viewports via Figma's image API
   const figmaApiUrl = `https://api.figma.com/v1/files/${fileKey}`;
-  const headers: Record<string, string> = {};
-  if (token) headers["X-Figma-Token"] = token;
 
-  const fileRes = await fetch(figmaApiUrl, { headers });
+  const fileRes = await fetch(figmaApiUrl);
   if (!fileRes.ok) throw new Error("Failed to fetch Figma file");
   const fileData = await fileRes.json();
 
@@ -159,8 +158,7 @@ async function captureFigma(context: any, fileKey: string, token?: string): Prom
 
   // Get image URLs for the page at 3 scales
   const imageRes = await fetch(
-    `https://api.figma.com/v1/images/${fileKey}?ids=${firstPage.id}&scale=2&format=png`,
-    { headers }
+    `https://api.figma.com/v1/images/${fileKey}?ids=${firstPage.id}&scale=2&format=png`
   );
   if (!imageRes.ok) throw new Error("Failed to fetch Figma images");
   const imageData = await imageRes.json();

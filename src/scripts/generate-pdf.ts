@@ -166,7 +166,7 @@ function generateReportHTML(report: any, project: any, version: any): string {
         const score = report.criteria_scores[c.key] || 0;
         return `
         <div class="criteria-card" style="background: ${getScoreBg(score)};">
-          <div class="criteria-score" style="color: ${getScoreColor(score)};">${score}</div>
+          <div class="criteria-score" style="color: ${getScoreColor(score)};">${score.toFixed(1)}</div>
           <div class="criteria-label"><span class="criteria-icon">${c.icon}</span><span>${c.label}</span></div>
         </div>
         `;
@@ -190,7 +190,7 @@ function generateReportHTML(report: any, project: any, version: any): string {
     const issues = report.issues[c.key] || [];
     return `
   <div class="page">
-    <h2>${c.icon} ${c.label} <span class="score-badge" style="background: ${getScoreBg(score)}; color: ${getScoreColor(score)};">${score}/10</span></h2>
+    <h2>${c.icon} ${c.label} <span class="score-badge" style="background: ${getScoreBg(score)}; color: ${getScoreColor(score)};">${score.toFixed(1)}/10</span></h2>
     ${issues.length === 0 ? `
       <p style="color: #16a34a; font-weight: 500;">✅ Серьёзных проблем не выявлено</p>
     ` : issues.map((issue: string) => `

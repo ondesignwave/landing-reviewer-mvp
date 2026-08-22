@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     console.log('=== END DEBUG ===');
 
     const body = await request.json();
-    const { source_type, url, figma_url, figma_token, screenshot_urls } = body;
+    const { source_type, url, figma_url, screenshot_urls } = body;
 
     if (!source_type || !["url", "figma", "files"].includes(source_type)) {
       return NextResponse.json({ error: "Неверный тип источника" }, { status: 400 });
@@ -111,7 +111,6 @@ export async function POST(request: NextRequest) {
       sourceType: source_type,
       url,
       figmaUrl: figma_url,
-      figmaToken: figma_token,
       userId: user?.id,
     });
 

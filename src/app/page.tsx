@@ -31,7 +31,6 @@ export default function LandingPage() {
   const [activeTab, setActiveTab] = React.useState<"url" | "figma" | "files">("url");
   const [url, setUrl] = React.useState("");
   const [figmaUrl, setFigmaUrl] = React.useState("");
-  const [figmaToken, setFigmaToken] = React.useState("");
   const [files, setFiles] = React.useState<File[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [uploadStatus, setUploadStatus] = React.useState<string | null>(null);
@@ -106,7 +105,6 @@ export default function LandingPage() {
       if (activeTab === "url") body.url = url;
       else if (activeTab === "figma") {
         body.figma_url = figmaUrl;
-        if (figmaToken) body.figma_token = figmaToken;
       } else {
         const { pdfToImageFiles } = await import("@/lib/pdf-to-images");
         const { compressImageFile } = await import("@/lib/image-compress");
@@ -213,6 +211,12 @@ export default function LandingPage() {
                 Как это работает
               </Button>
             </div>
+            <Link
+              href="/example"
+              className="inline-block mt-4 text-sm text-white/60 hover:text-white hover:underline"
+            >
+              Посмотреть пример отчёта →
+            </Link>
           </div>
         </div>
       </section>
@@ -315,23 +319,16 @@ export default function LandingPage() {
                     <label className="block text-sm font-medium">Публичная ссылка на Figma-файл</label>
                     <Input
                       type="url"
-                      placeholder="https://www.figma.com/file/FILE_KEY/... или https://www.figma.com/design/FILE_KEY/..."
+                      placeholder="figma.com/file/... или figma.com/design/..."
                       value={figmaUrl}
                       onChange={(e) => setFigmaUrl(e.target.value)}
                       disabled={isLoading}
                       required
                     />
-                    <label className="block text-sm font-medium">Figma Personal Access Token (опционально)</label>
-                    <Input
-                      type="password"
-                      placeholder="figd_... (нужен для приватных файлов)"
-                      value={figmaToken}
-                      onChange={(e) => setFigmaToken(e.target.value)}
-                      disabled={isLoading}
-                    />
                     <p className="text-sm text-muted-foreground">
-                      Для публичных файлов токен не нужен. Мы парсим структуру, стили, компоненты и
-                      автолейауты.
+                      Файл должен быть открыт по ссылке для всех («Anyone with the link»). Приватные
+                      файлы пока не поддерживаем — не просим токен доступа к вашему аккаунту Figma. Мы
+                      парсим структуру, стили, компоненты и автолейауты.
                     </p>
                   </div>
                 )}
@@ -342,7 +339,7 @@ export default function LandingPage() {
                       onFilesChange={setFiles}
                       disabled={isLoading}
                       maxFiles={10}
-                      maxSizeMB={10}
+                      maxSizeMB={45}
                     />
                     <p className="text-sm text-muted-foreground text-center">
                       Загрузите скриншоты экранов (PNG/JPG) или PDF. Рекомендуем: десктоп, планшет,
@@ -363,7 +360,7 @@ export default function LandingPage() {
                       {uploadStatus || "Запускаю анализ..."}
                     </>
                   ) : (
-                    "Запустить AI-разбор →"
+                    "Начать бесплатный разбор →"
                   )}
                 </Button>
               </form>
@@ -429,8 +426,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">Готовы проверить свой лендинг?</h2>
           <p className="text-white/70 mb-8 max-w-2xl mx-auto">
-            Первый полный разбор бесплатно. Без регистрации для превью. Платите только если результат
-            пригодился.
+            Пока сервис в бета-тесте — все разборы бесплатны, без ограничений и скрытых условий
           </p>
           <Button
             size="lg"
@@ -439,7 +435,7 @@ export default function LandingPage() {
             onClick={() => scrollToId("analyze-form")}
           >
             <ArrowRight className="h-4 w-4" />
-            Начать бесплатно
+            Начать бесплатный разбор
           </Button>
         </div>
       </section>
@@ -447,7 +443,13 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-12 border-t border-white/10">
         <div className="container mx-auto px-4 text-center text-sm text-white/50 space-y-2">
-          <p>Landing Reviewer — MVP для веб-дизайнеров. Сделано с Next.js, Supabase, Inngest.</p>
+          <p>Landing Reviewer — MVP для веб-дизайнеров</p>
+          <p>
+            ИП Соколова А. Д. ·{" "}
+            <a href="mailto:landing-reviewer@mail.ru" className="hover:text-white hover:underline">
+              landing-reviewer@mail.ru
+            </a>
+          </p>
           <p>
             <Link href="/privacy" className="hover:text-white hover:underline">
               Политика обработки персональных данных
@@ -458,7 +460,7 @@ export default function LandingPage() {
 
       {jobId && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="relative bg-card rounded-xl p-8 max-w-md w-full text-center">
+          <div className="relative bg-card rounded-xl p-8 max-w-md w-full">
             <button
               onClick={closeModal}
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
@@ -504,7 +506,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Анализ запущен</h3>
                 <p className="text-muted-foreground mb-1">Обычно занимает 3–5 минут</p>
-                <p className="text-muted-foreground mb-1 tabular-nums">
+                <p className="text-foreground font-medium mb-1 tabular-nums">
                   Прошло {jobElapsedLabel || "0:00"}
                 </p>
                 <p className="text-muted-foreground mb-6">
