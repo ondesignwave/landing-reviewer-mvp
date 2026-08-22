@@ -109,6 +109,12 @@ export function Dropzone({
 
   return (
     <div className={cn("relative", className)}>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium">Файлы</span>
+        <span className={cn("text-sm tabular-nums", limitReached ? "text-destructive" : "text-muted-foreground")}>
+          {files.length}/{maxFiles}
+        </span>
+      </div>
       {limitReached ? (
         <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl bg-muted/10">
           <Upload className="mx-auto h-12 w-12 text-muted-foreground/40" />

@@ -38,6 +38,20 @@ export default function LandingPage() {
   const [jobData, setJobData] = React.useState<any>(null);
   const [now, setNow] = React.useState(() => Date.now());
   const [error, setError] = React.useState<string | null>(null);
+  const suppressSubmitUntilRef = React.useRef(0);
+
+  React.useEffect(() => {
+    // Opening the native file picker / camera sheet blurs the window;
+    // closing it fires focus again. On some mobile browsers, the tap that
+    // dismisses that sheet can also register as a click on whatever page
+    // element sits underneath it — which was firing the submit button on
+    // its own. Ignore submits for a moment right after regaining focus.
+    const onWindowFocus = () => {
+      suppressSubmitUntilRef.current = Date.now() + 700;
+    };
+    window.addEventListener("focus", onWindowFocus);
+    return () => window.removeEventListener("focus", onWindowFocus);
+  }, []);
 
   React.useEffect(() => {
     if (!jobId) return;
@@ -95,6 +109,7 @@ export default function LandingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (Date.now() < suppressSubmitUntilRef.current) return;
     setError(null);
     setJobData(null);
     setIsLoading(true);

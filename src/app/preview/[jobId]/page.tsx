@@ -353,6 +353,20 @@ export default function PreviewPage({ params }: { params: { jobId: string } }) {
                     </li>
                   ))}
                 </ol>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-4 pt-4 border-t text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                    1 — критично
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                    2 — важно
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                    3 — желательно
+                  </span>
+                </div>
               </CardContent>
             </Card>
           </div>
