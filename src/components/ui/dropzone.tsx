@@ -105,43 +105,55 @@ export function Dropzone({
     e.target.value = "";
   };
 
+  const limitReached = files.length >= maxFiles;
+
   return (
     <div className={cn("relative", className)}>
-      <div
-        onDragEnter={handleDrag}
-        onDragLeave={handleDrag}
-        onDragOver={handleDrag}
-        onDrop={handleDrop}
-        className={cn(
-          "relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl transition-all",
-          "bg-muted/30 hover:bg-muted/50",
-          isDragActive && "border-primary bg-primary/5",
-          disabled && "opacity-50 cursor-not-allowed"
-        )}
-      >
-        <input
-          ref={inputRef}
-          type="file"
-          multiple
-          accept={acceptedTypes.join(",")}
-          onChange={handleInputChange}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          disabled={disabled}
-          aria-label="Загрузить файлы"
-        />
-        <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Перетащите файлы сюда или нажмите для загрузки
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          PNG, JPG, PDF · до {maxSizeMB}MB ·{" "}
-          {files.length === 0
-            ? `макс. ${maxFiles} ${pluralizeRu(maxFiles, "файл", "файла", "файлов")}`
-            : files.length >= maxFiles
-              ? "лимит файлов достигнут"
+      {limitReached ? (
+        <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl bg-muted/10">
+          <Upload className="mx-auto h-12 w-12 text-muted-foreground/40" />
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            Лимит {maxFiles} {pluralizeRu(maxFiles, "файл", "файла", "файлов")} достигнут
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Удалите файл ниже, чтобы добавить другой
+          </p>
+        </div>
+      ) : (
+        <div
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+          className={cn(
+            "relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl transition-all",
+            "bg-muted/30 hover:bg-muted/50",
+            isDragActive && "border-primary bg-primary/5",
+            disabled && "opacity-50 cursor-not-allowed"
+          )}
+        >
+          <input
+            ref={inputRef}
+            type="file"
+            multiple
+            accept={acceptedTypes.join(",")}
+            onChange={handleInputChange}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            disabled={disabled}
+            aria-label="Загрузить файлы"
+          />
+          <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            Перетащите файлы сюда или нажмите для загрузки
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            PNG, JPG, PDF · до {maxSizeMB}MB ·{" "}
+            {files.length === 0
+              ? `макс. ${maxFiles} ${pluralizeRu(maxFiles, "файл", "файла", "файлов")}`
               : `можно добавить ещё ${maxFiles - files.length} ${pluralizeRu(maxFiles - files.length, "файл", "файла", "файлов")}`}
-        </p>
-      </div>
+          </p>
+        </div>
+      )}
 
       {files.length > 0 && (
         <div className="mt-6 space-y-3" role="list" aria-label="Загруженные файлы">
